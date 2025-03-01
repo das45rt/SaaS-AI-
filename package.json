@@ -4,6 +4,6 @@
   "main": "functions/generateArticle.js",
   "scripts": {},
   "dependencies": {
-    "node-fetch": "^2.6.1"  // Убедитесь, что версия актуальна
+    "node-fetch": "^2.6.1"
   }
 }
