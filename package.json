@@ -1,9 +1,0 @@
-{
-  "name": "article-generator",
-  "version": "1.0.0",
-  "main": "functions/generateArticle.js",
-  "scripts": {},
-  "dependencies": {
-    "node-fetch": "^2.6.1"
-  }
-}
