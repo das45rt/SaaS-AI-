@@ -3,43 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор статей</title>
+    <title>Чат с DeepSeek</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        input, button { margin: 5px; }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        #response {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
-    <h1>Генератор статей для блога</h1>
-    <label for="topic">Тема статьи:</label>
-    <input type="text" id="topic" placeholder="Введите тему статьи..."><br>
-    
-    <label for="length">Объем статьи (в словах):</label>
-    <input type="text" id="length" placeholder="Введите желаемый объем..."><br>
-    
-    <label for="chapters">Количество глав:</label>
-    <input type="text" id="chapters" placeholder="Введите количество глав..."><br>
-    
-    <button id="generateButton">Сгенерировать статью</button>
-    
-    <h2>Результат:</h2>
-    <pre id="result"></pre>
-    
+    <h1>Введите сообщение</h1>
+    <input type="text" id="messageInput" placeholder="Напишите сообщение">
+    <button id="sendButton">Отправить</button>
+    <p id="response"></p>
+
     <script>
-        document.getElementById('generateButton').onclick = async () => {
-            const topic = document.getElementById('topic').value;
-            const length = document.getElementById('length').value;
-            const chapters = document.getElementById('chapters').value;
+        document.getElementById('sendButton').addEventListener('click', async () => {
+            const message = document.getElementById('messageInput').value.trim();
+            document.getElementById('response').textContent = 'Отправка...';
 
-            const response = await fetch('/.netlify/functions/generateArticle', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ topic, length, chapters })
-            });
+            try {
+                const res = await fetch('https://deepseekapi.org/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer YOUR_DEEPSEEK_API_KEY` // Замените на ваш API ключ
+                    },
+                    body: JSON.stringify({
+                        model: 'deepseek-r1',
+                        messages: [{ role: 'user', content: message }]
+                    })
+                });
 
-            const data = await response.json();
-            document.getElementById('result').textContent = data.article || 'Ошибка при генерации статьи.';
-        };
+                if (!res.ok) throw new Error('Ошибка от сервера');
+
+                const data = await res.json();
+                document.getElementById('response').textContent = data.choices[0].message.content || 'Нет ответа';
+            } catch (error) {
+                document.getElementById('response').textContent = 'Ошибка: ' + error.message;
+            }
+        });
     </script>
 </body>
 </html>
