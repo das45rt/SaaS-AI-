@@ -1,8 +1,8 @@
-const fetch = require('node-fetch');
+const fetch = require('node-fetch'); // Импортируем node-fetch
 
 exports.handler = async (event, context) => {
     const { topic, length, chapters } = JSON.parse(event.body);
-    const apiKey = 'sk-TxGarQbc4C7E_h17lyerW'; // Замените на ваш реальный API ключ
+    const apiKey = 'YOUR_API_KEY'; // Замените на ваш реальный API ключ
     const url = 'https://deepseekapi.org/v1/chat/completions';
 
     const prompt = `Напишите статью на тему '${topic}' объемом ${length} слов и с ${chapters} главами.`;
