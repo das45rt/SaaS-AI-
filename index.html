@@ -3,61 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Чат с DeepSeek</title>
+    <title>Чат-бот</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            padding: 20px;
             background-color: #f4f4f4;
         }
-        input, button {
-            padding: 10px;
-            margin: 5px;
-            font-size: 16px;
+        #chat-container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
         }
         #response {
             margin-top: 20px;
-            font-size: 18px;
-            color: #333;
         }
     </style>
 </head>
 <body>
-    <h1>Введите сообщение</h1>
-    <input type="text" id="messageInput" placeholder="Напишите сообщение">
-    <button id="sendButton">Отправить</button>
-    <p id="response"></p>
 
-    <script>
-        document.getElementById('sendButton').addEventListener('click', async () => {
-            const message = document.getElementById('messageInput').value.trim();
-            document.getElementById('response').textContent = 'Отправка...';
+<div id="chat-container">
+    <h2>Чат-бот</h2>
+    <input type="text" id="user-input" placeholder="Введите фразу..." />
+    <button id="send-button">Отправить</button>
+    <div id="response"></div>
+</div>
 
-            try {
-                const res = await fetch('https://deepseekapi.org/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `sk-TxGarQbc4C7E_h17lyerW` 
-                    },
-                    body: JSON.stringify({
-                        model: 'deepseek-r1',
-                        messages: [{ role: 'user', content: message }]
-                    })
-                });
+<script>
+    document.getElementById('send-button').addEventListener('click', function() {
+        const userInput = document.getElementById('user-input').value.toLowerCase();
+        const responseDiv = document.getElementById('response');
+        
+        let responseText = '';
 
-                if (!res.ok) throw new Error('Ошибка от сервера');
+        if (userInput === 'привет') {
+            responseText = 'Привет, все хорошо, как ты?';
+        } else if (userInput === 'как дела?') {
+            responseText = 'Привет, все хорошо, как ты?';
+        } else {
+            responseText = 'Извините, я не понимаю.';
+        }
 
-                const data = await res.json();
-                document.getElementById('response').textContent = data.choices[0].message.content || 'Нет ответа';
-            } catch (error) {
-                document.getElementById('response').textContent = 'Ошибка: ' + error.message;
-            }
-        });
-    </script>
+        responseDiv.textContent = responseText;
+    });
+</script>
+
 </body>
 </html>
