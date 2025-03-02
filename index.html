@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Чат-бот</title>
+    <title>Генератор статей</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
             background-color: #f4f4f4;
         }
-        #chat-container {
+        #form-container {
             background: white;
             padding: 20px;
             border-radius: 5px;
@@ -25,29 +25,48 @@
 </head>
 <body>
 
-<div id="chat-container">
-    <h2>Чат-бот</h2>
-    <input type="text" id="user-input" placeholder="Введите фразу..." />
-    <button id="send-button">Отправить</button>
+<div id="form-container">
+    <h2>Генератор статей</h2>
+    <input type="text" id="topic" placeholder="Введите тему статьи..." />
+    <input type="number" id="wordCount" placeholder="Количество слов..." />
+    <button id="generate-button">Сгенерировать статью</button>
     <div id="response"></div>
 </div>
 
 <script>
-    document.getElementById('send-button').addEventListener('click', function() {
-        const userInput = document.getElementById('user-input').value.toLowerCase();
+    document.getElementById('generate-button').addEventListener('click', async function() {
+        const topic = document.getElementById('topic').value;
+        const wordCount = document.getElementById('wordCount').value;
+
         const responseDiv = document.getElementById('response');
-        
-        let responseText = '';
+        responseDiv.textContent = 'Генерация статьи...';
 
-        if (userInput === 'привет') {
-            responseText = 'Привет, все хорошо, как ты?';
-        } else if (userInput === 'как дела?') {
-            responseText = 'Привет, все хорошо, как ты?';
-        } else {
-            responseText = 'Извините, я не понимаю.';
+        try {
+            const apiKey = 'sk-d7cd0c3e047044b9b14a6a12daec7ba5';
+            const apiUrl = 'https://platform.deepseek.com/api_keys';
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    topic: topic,
+                    word_count: parseInt(wordCount)
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка сети');
+            }
+
+            const data = await response.json();
+            responseDiv.textContent = data.article || 'Не удалось сгенерировать статью.';
+
+        } catch (error) {
+            responseDiv.textContent = `Ошибка: ${error.message}`;
         }
-
-        responseDiv.textContent = responseText;
     });
 </script>
 
