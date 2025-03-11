@@ -15,8 +15,12 @@
                 body: JSON.stringify({ input }),
             });
 
-            const data = await response.json();
-            document.getElementById("chatbot-response").innerText = data.response;
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById("chatbot-response").innerText = data.response;
+            } else {
+                document.getElementById("chatbot-response").innerText = "Ошибка при получении ответа.";
+            }
         }
     </script>
 </head>
