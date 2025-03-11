@@ -1,79 +1,29 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор статей</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        #form-container {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: auto;
-        }
-        #response {
-            margin-top: 20px;
-            white-space: pre-wrap; /* сохраняет пробелы и переносы строк */
-            border: 1px solid #ccc;
-            padding: 10px;
-            background: #fafafa;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-
-<div id="form-container">
-    <h2>Генератор статей</h2>
-    <input type="text" id="topic" placeholder="Введите тему статьи..." />
-    <input type="number" id="wordCount" placeholder="Количество слов..." />
-    <button id="generate-button">Сгенерировать статью</button>
-    <div id="response"></div>
-</div>
-
-<script>
-    document.getElementById('generate-button').addEventListener('click', async function() {
-        const topic = document.getElementById('topic').value;
-        const wordCount = document.getElementById('wordCount').value;
-
-        const responseDiv = document.getElementById('response');
-        responseDiv.textContent = 'Генерация статьи...';
-
-        try {
-            const apiKey = ''sk-d7cd0c3e047044b9b14a6a12daec7ba5'; // Замените на ваш ключ
-            const apiUrl = 'https://cors-anywhere.herokuapp.com/https://platform.deepseek.com/api_keys';
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
+    <title>AI Chatbot</title>
+    <script>
+        async function chat() {
+            const input = document.getElementById("user-input").value;
+            const response = await fetch("/api/chat", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    topic: topic,
-                    word_count: parseInt(wordCount)
-                })
+                body: JSON.stringify({ input }),
             });
 
-            if (!response.ok) {
-                throw new Error('Ошибка сети');
-            }
-
             const data = await response.json();
-            responseDiv.textContent = data.article || 'Не удалось сгенерировать статью.';
-
-        } catch (error) {
-            responseDiv.textContent = `Ошибка: ${error.message}`;
+            document.getElementById("chatbot-response").innerText = data.response;
         }
-    });
-</script>
-
+    </script>
+</head>
+<body>
+    <h1>AI Chatbot</h1>
+    <input type="text" id="user-input" placeholder="Введите ваш вопрос">
+    <button onclick="chat()">Отправить</button>
+    <p id="chatbot-response"></p>
 </body>
 </html>
