@@ -1,0 +1,12 @@
+{
+  "name": "my-gradio-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "openai": "^3.x.x",
+    "express": "^4.x.x"
+  },
+  "scripts": {
+    "start": "node api/chatbot.js"
+  }
+}
