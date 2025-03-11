@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 const client = new OpenAI({
-    apiKey: 'b655ab90da1c4ef399b67975f49c9c18',  // Вставьте ваш API-ключ
+    apiKey: process.env.API_KEY,  // Используем переменную окружения
 });
 
 app.post('/api/chat', async (req, res) => {
