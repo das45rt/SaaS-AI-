@@ -1,28 +1,33 @@
 const express = require('express');
-const SimpleChatbot = require('simple-chatbot');
+const { pipeline } = require('stream');
+const { AutoModelForCausalLM, AutoTokenizer } = require('transformers');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static('public')); // Для статических файлов
 
-// Создаем экземпляр чат-бота
-const chatbot = new SimpleChatbot();
+let model, tokenizer;
 
-chatbot.addQuestion('Hello', 'Hi! How can I help you?');
-chatbot.addQuestion('How are you?', 'I am just a bot, but I am doing well!');
-chatbot.addQuestion('What is your name?', 'I am a simple chatbot.');
-chatbot.addQuestion('Bye', 'Goodbye! Have a great day!');
+// Загружаем модель и токенизатор
+async function loadModel() {
+    model = await AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium");
+    tokenizer = await AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium");
+}
 
-// Обработчик запроса на получение ответа
-app.post('/api/chat', (req, res) => {
+// Обработчик запросов
+app.post('/api/chat', async (req, res) => {
     const userInput = req.body.input;
+    const inputIds = tokenizer.encode(userInput + tokenizer.eos_token, return_tensors='pt');
 
-    const response = chatbot.getResponse(userInput);
-    res.json({ response });
+    const response = await model.generate(inputIds, { max_length: 1000, pad_token_id: tokenizer.eos_token_id });
+    const botResponse = tokenizer.decode(response[0], skip_special_tokens=true);
+
+    res.json({ response: botResponse });
 });
 
-app.listen(port, () => {
+// Запускаем сервер
+app.listen(port, async () => {
+    await loadModel();
     console.log(`Сервер работает на порту ${port}`);
 });
