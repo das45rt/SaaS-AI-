@@ -1,12 +1,12 @@
 {
-  "name": "my-gradio-app",
+  "name": "my-project",
   "version": "1.0.0",
   "main": "index.js",
-  "dependencies": {
-    "openai": "^3.x.x",
-    "express": "^4.x.x"
-  },
   "scripts": {
-    "start": "node api/chatbot.js"
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "axios": "^0.21.1"
   }
 }
