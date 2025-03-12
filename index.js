@@ -1,33 +1,37 @@
-const express = require('express');
-const { pipeline } = require('stream');
-const { AutoModelForCausalLM, AutoTokenizer } = require('transformers');
+import OpenAI from "openai";
+import express from "express";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Middleware для обработки JSON
 app.use(express.json());
 
-let model, tokenizer;
+// Инициализация DeepSeek API
+const openai = new OpenAI({
+    baseURL: 'https://api.deepseek.com',
+    apiKey: process.env.DEEPSEEK_API_KEY, // Используем переменную окружения
+});
 
-// Загружаем модель и токенизатор
-async function loadModel() {
-    model = await AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium");
-    tokenizer = await AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium");
-}
-
-// Обработчик запросов
+// Основной маршрут для общения с ботом
 app.post('/api/chat', async (req, res) => {
     const userInput = req.body.input;
-    const inputIds = tokenizer.encode(userInput + tokenizer.eos_token, return_tensors='pt');
 
-    const response = await model.generate(inputIds, { max_length: 1000, pad_token_id: tokenizer.eos_token_id });
-    const botResponse = tokenizer.decode(response[0], skip_special_tokens=true);
+    try {
+        const completion = await openai.chat.completions.create({
+            messages: [{ role: "user", content: userInput }],
+            model: "deepseek-chat",
+        });
 
-    res.json({ response: botResponse });
+        const botResponse = completion.choices[0].message.content;
+        res.json({ response: botResponse });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Ошибка при взаимодействии с API' });
+    }
 });
 
 // Запускаем сервер
-app.listen(port, async () => {
-    await loadModel();
+app.listen(port, () => {
     console.log(`Сервер работает на порту ${port}`);
 });
