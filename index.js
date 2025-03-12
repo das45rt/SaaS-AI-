@@ -1,5 +1,5 @@
 const express = require('express');
-const axios = require('axios');
+const SimpleChatbot = require('simple-chatbot');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -7,32 +7,20 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static('public')); // Для статических файлов
 
-const GEMINI_API_KEY = 'AIzaSyBfiOnvMadurYiKJcPBmXbpak0FGRvyt4I'; // Вставьте ваш API-ключ здесь
+// Создаем экземпляр чат-бота
+const chatbot = new SimpleChatbot();
 
-app.post('/api/chat', async (req, res) => {
+chatbot.addQuestion('Hello', 'Hi! How can I help you?');
+chatbot.addQuestion('How are you?', 'I am just a bot, but I am doing well!');
+chatbot.addQuestion('What is your name?', 'I am a simple chatbot.');
+chatbot.addQuestion('Bye', 'Goodbye! Have a great day!');
+
+// Обработчик запроса на получение ответа
+app.post('/api/chat', (req, res) => {
     const userInput = req.body.input;
 
-    try {
-        const response = await axios.post(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
-            {
-                contents: [{
-                    parts: [{ text: `Please provide a detailed response to the following question: ${userInput}` }]
-                }]
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
-
-        const message = response.data.contents[0].parts[0].text;
-        res.json({ response: message });
-    } catch (error) {
-        console.error('Ошибка:', error);
-        res.status(500).send('Ошибка при обработке запроса.');
-    }
+    const response = chatbot.getResponse(userInput);
+    res.json({ response });
 });
 
 app.listen(port, () => {
