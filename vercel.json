@@ -11,5 +11,8 @@
             "src": "/api/chat",
             "dest": "index.js"
         }
-    ]
+    ],
+    "env": {
+        "OPENAI_API_KEY": "@openai_api_key"  // Укажите переменные окружения в Vercel
+    }
 }
