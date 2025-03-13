@@ -1,15 +1,25 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "index.js",
-            "use": "@vercel/node"
-        }
+    "name": "deepseek-chatbot",
+    "version": "1.0.0",
+    "description": "A chatbot powered by OpenAI for deep searching.",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "keywords": [
+        "chatbot",
+        "openai",
+        "nodejs"
     ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/index.js"
-        }
-    ]
+    "author": "daya",
+    "license": "MIT",
+    "dependencies": {
+        "express": "^4.17.1",
+        "openai": "^3.1.0",
+        "mongodb": "^5.0.0"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    }
 }
