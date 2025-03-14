@@ -3,16 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Простой Чат Бот</title>
+    <title>Чат Бот</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Чат Бот</h1>
-        <input type="text" id="userInput" placeholder="Введите сообщение...">
+        <input type="text" id="userInput" placeholder="Введите сообщение..." />
         <button id="chatButton">Отправить</button>
         <div id="botResponse" class="response"></div>
     </div>
-    <script src="script.js"></script>
+    <script>
+        document.getElementById('chatButton').addEventListener('click', async function() {
+            const userInput = document.getElementById('userInput').value;
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: userInput }),
+            });
+            const data = await response.json();
+            document.getElementById('botResponse').innerText = data.response;
+        });
+    </script>
 </body>
 </html>
