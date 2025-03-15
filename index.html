@@ -32,9 +32,10 @@
             font-size: 16px;
             cursor: pointer;
         }
-        .response {
+        .response, .error {
             margin-top: 20px;
             font-size: 18px;
+            color: red; /* Цвет для сообщений об ошибке */
         }
     </style>
 </head>
@@ -44,10 +45,12 @@
         <input type="text" id="userInput" placeholder="Введите сообщение..." />
         <button id="chatButton">Отправить</button>
         <div id="botResponse" class="response"></div>
+        <div id="errorMessage" class="error"></div> <!-- Элемент для отображения ошибок -->
     </div>
     <script>
         document.getElementById('chatButton').addEventListener('click', async function() {
             const userInput = document.getElementById('userInput').value;
+            document.getElementById('errorMessage').innerText = ''; // Сброс сообщения об ошибке
             const response = await fetch('/ask', {
                 method: 'POST',
                 headers: {
@@ -55,8 +58,14 @@
                 },
                 body: JSON.stringify({ message: userInput }),
             });
-            const data = await response.json();
-            document.getElementById('botResponse').innerText = data.response || "Нет ответа от сервера.";
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('botResponse').innerText = data.response || "Нет ответа от сервера.";
+            } else {
+                const errorData = await response.json();
+                document.getElementById('errorMessage').innerText = errorData.response || "Произошла ошибка.";
+            }
         });
     </script>
 </body>
