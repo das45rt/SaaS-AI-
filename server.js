@@ -17,6 +17,10 @@ const client = new OpenAI({
 app.post('/ask', async (req, res) => {
     const userMessage = req.body.message;
 
+    if (!userMessage) {
+        return res.status(400).json({ response: "Пожалуйста, введите сообщение." });
+    }
+
     try {
         const completion = await client.chat.completions.create({
             model: "gpt-4o",
