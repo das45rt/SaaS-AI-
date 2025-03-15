@@ -1,4 +1,3 @@
-// server.js
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -14,12 +13,10 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Инициализация клиента OpenAI
 const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Обработка POST-запроса
 app.post('/ask', async (req, res) => {
     const userMessage = req.body.message;
 
@@ -36,12 +33,14 @@ app.post('/ask', async (req, res) => {
         const botResponse = response.choices[0].message.content;
         res.json({ response: botResponse });
     } catch (error) {
-        console.error("Ошибка:", error);
-        res.status(500).json({ response: "Ошибка обработки сообщения: " + error.message });
+        console.error("Ошибка при обращении к OpenAI:", error); // Логирование ошибки
+        res.status(500).json({
+            response: "Ошибка обработки сообщения.",
+            error: error.message // Возврат сообщения об ошибке
+        });
     }
 });
 
-// Запуск сервера
 app.listen(port, () => {
     console.log(`Сервер запущен на http://localhost:${port}`);
 });
