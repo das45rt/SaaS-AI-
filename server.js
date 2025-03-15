@@ -1,16 +1,22 @@
+// server.js
 import express from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import OpenAI from 'openai';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
 // Инициализация клиента OpenAI
 const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY, // Убедитесь, что установили переменную окружения
+    apiKey: process.env.OPENAI_API_KEY,
 });
 
 // Обработка POST-запроса
@@ -22,29 +28,20 @@ app.post('/ask', async (req, res) => {
     }
 
     try {
-        const completion = await client.chat.completions.create({
-            model: "gpt-4o",
-            messages: [
-                {
-                    role: "user",
-                    content: userMessage,
-                },
-            ],
+        const response = await client.chat.completions.create({
+            model: "gpt-4",
+            messages: [{ role: "user", content: userMessage }],
         });
 
-        // Проверяем, что ответ получен
-        if (completion.choices && completion.choices.length > 0) {
-            res.json({ response: completion.choices[0].message.content });
-        } else {
-            res.json({ response: "Не удалось получить ответ от модели." });
-        }
+        const botResponse = response.choices[0].message.content;
+        res.json({ response: botResponse });
     } catch (error) {
         console.error("Ошибка:", error);
         res.status(500).json({ response: "Ошибка обработки сообщения: " + error.message });
     }
 });
 
-// Запускаем сервер
+// Запуск сервера
 app.listen(port, () => {
     console.log(`Сервер запущен на http://localhost:${port}`);
 });
