@@ -1,10 +1,10 @@
-import { OpenAI } from 'openai'; // Правильный импорт
+import OpenAI from 'openai'; // Импортируйте как обычный модуль
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const client = new OpenAI({
-  apiKey: process.env.GITHUB_TOKEN, // Используйте ваш токен здесь
+  apiKey: process.env.GITHUB_TOKEN, // Ваш токен
 });
 
 export default async function handler(req, res) {
@@ -31,4 +31,4 @@ export default async function handler(req, res) {
     console.error("Error generating article:", err);
     res.status(500).json({ error: "Failed to generate article." });
   }
-}
+        }
