@@ -1,13 +1,10 @@
-import OpenAI from 'openai';
+import { OpenAI } from 'openai'; // Правильный импорт
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const token = process.env["GITHUB_TOKEN"];
-
 const client = new OpenAI({
-  baseURL: "https://models.inference.ai.azure.com",
-  apiKey: token
+  apiKey: process.env.GITHUB_TOKEN, // Используйте ваш токен здесь
 });
 
 export default async function handler(req, res) {
