@@ -6,19 +6,25 @@
     <title>Генерация статьи</title>
     <script>
         async function generateArticle() {
-            const topic = document.getElementById("topic").value;
-            const wordCount = document.getElementById("wordCount").value;
+    const topic = document.getElementById("topic").value;
+    const wordCount = document.getElementById("wordCount").value;
 
-            const response = await fetch('/generate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ topic, word_count: wordCount }),
-            });
+    const response = await fetch('/generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ topic, word_count: wordCount }),
+    });
 
-            const data = await response.json();
-            document.getElementById("result").innerText = data.article;
+    const data = await response.json();
+    
+    if (response.ok) {
+        document.getElementById("result").innerText = data.article;
+        document.getElementById("time").innerText = `Время генерации: ${data.generation_time.toFixed(2)} секунд`;
+    } else {
+        document.getElementById("result").innerText = data.message || 'Произошла ошибка.';
+    }
         }
     </script>
 </head>
