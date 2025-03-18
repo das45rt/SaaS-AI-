@@ -5,7 +5,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Замените 'YOUR_GEMINI_API_KEY' на ваш реальный API-ключ
-const genAI = new GoogleGenerativeAI('YOUR_GEMINI_API_KEY');
+const genAI = new GoogleGenerativeAI('AIzaSyBfiOnvMadurYiKJcPBmXbpak0FGRvyt4I');
 
 app.use(express.json());
 
