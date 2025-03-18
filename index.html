@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        #messages {
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        .user-message {
+            color: blue;
+        }
+        .ai-response {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Chat Platform</h1>
+    <div id="messages"></div>
+    <textarea id="userInput" placeholder="Введите ваше сообщение..." rows="4" style="width: 100%;"></textarea>
+    <button id="sendButton">Отправить</button>
+
+    <script>
+        document.getElementById('sendButton').onclick = async () => {
+            const userInput = document.getElementById('userInput').value;
+            document.getElementById('messages').innerHTML += `<div class="user-message">Вы: ${userInput}</div>`;
+            document.getElementById('userInput').value = '';
+
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userInput }),
+            });
+
+            const data = await response.json();
+            document.getElementById('messages').innerHTML += `<div class="ai-response">AI: ${data.response}</div>`;
+            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+        };
+    </script>
+</body>
+</html>
