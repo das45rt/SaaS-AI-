@@ -5,7 +5,7 @@ import time  # Импортируем модуль для работы со вр
 app = Flask(__name__)
 
 # Инициализация клиента GenAI
-client = genai.Client(api_key="YOUR_API_KEY")  # Замените на ваш API-ключ
+client = genai.Client(api_key="AIzaSyBfiOnvMadurYiKJcPBmXbpak0FGRvyt4I")  # Замените на ваш API-ключ
 
 @app.route('/')
 def index():
