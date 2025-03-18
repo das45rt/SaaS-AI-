@@ -4,40 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генерация статьи</title>
-    <script>
-        async function generateArticle() {
-    const topic = document.getElementById("topic").value;
-    const wordCount = document.getElementById("wordCount").value;
-
-    const response = await fetch('/generate', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ topic, word_count: wordCount }),
-    });
-
-    const data = await response.json();
-    
-    if (response.ok) {
-        document.getElementById("result").innerText = data.article;
-        document.getElementById("time").innerText = `Время генерации: ${data.generation_time.toFixed(2)} секунд`;
-    } else {
-        document.getElementById("result").innerText = data.message || 'Произошла ошибка.';
-    }
-        }
-    </script>
 </head>
 <body>
     <h1>Генерация статьи</h1>
-    <label for="topic">Тема статьи:</label>
-    <input type="text" id="topic" placeholder="Введите тему..." required>
-    <br>
+    <label for="topic">Тема:</label>
+    <input type="text" id="topic" required>
+    
     <label for="wordCount">Количество слов:</label>
-    <input type="number" id="wordCount" value="300" step="50" required>
-    <br>
+    <input type="number" id="wordCount" required>
+
     <button onclick="generateArticle()">Сгенерировать</button>
+
     <h2>Результат:</h2>
     <pre id="result"></pre>
+    <p id="time"></p>
+
+    <script>
+        async function generateArticle() {
+            const topic = document.getElementById("topic").value;
+            const wordCount = document.getElementById("wordCount").value;
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ topic, word_count: wordCount }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Сбой');
+                }
+
+                const data = await response.json();
+
+                document.getElementById("result").innerText = data.article || 'Сбой';
+                document.getElementById("time").innerText = `Время генерации: ${data.generation_time?.toFixed(2)} секунд`;
+            } catch (error) {
+                document.getElementById("result").innerText = 'Сбой';
+                document.getElementById("time").innerText = '';
+                console.error('Ошибка:', error);
+            }
+        }
+    </script>
 </body>
 </html>
