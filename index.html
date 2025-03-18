@@ -3,52 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat Platform</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-        }
-        #messages {
-            margin-bottom: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            padding: 10px;
-        }
-        .user-message {
-            color: blue;
-        }
-        .ai-response {
-            color: green;
-        }
-    </style>
+    <title>Генерация статьи с помощью AI</title>
 </head>
 <body>
-    <h1>AI Chat Platform</h1>
-    <div id="messages"></div>
-    <textarea id="userInput" placeholder="Введите ваше сообщение..." rows="4" style="width: 100%;"></textarea>
-    <button id="sendButton">Отправить</button>
+    <h1>Генерация статьи с помощью AI</h1>
+    <label for="topic">Тема статьи:</label>
+    <input type="text" id="topic" placeholder="Введите тему...">
+    <label for="word_count">Количество слов:</label>
+    <input type="number" id="word_count" value="300" step="50">
+    <button id="generate">Сгенерировать</button>
+    <h2>Результат:</h2>
+    <pre id="result"></pre>
 
     <script>
-        document.getElementById('sendButton').onclick = async () => {
-            const userInput = document.getElementById('userInput').value;
-            document.getElementById('messages').innerHTML += `<div class="user-message">Вы: ${userInput}</div>`;
-            document.getElementById('userInput').value = '';
+        document.getElementById('generate').onclick = async () => {
+            const topic = document.getElementById('topic').value;
+            const word_count = document.getElementById('word_count').value;
 
-            const response = await fetch('/api/chat', {
+            const response = await fetch('/generate', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ userInput }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic, word_count })
             });
 
             const data = await response.json();
-            document.getElementById('messages').innerHTML += `<div class="ai-response">AI: ${data.response}</div>`;
-            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+            document.getElementById('result').innerText = data.text || data.error || 'Ошибка: не удалось вывести текст.';
         };
     </script>
 </body>
