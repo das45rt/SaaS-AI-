@@ -5,11 +5,11 @@ import time  # Импортируем модуль для работы со вр
 app = Flask(__name__)
 
 # Инициализация клиента GenAI
-client = genai.Client(api_key="AIzaSyBfiOnvMadurYiKJcPBmXbpak0FGRvyt4I")
+client = genai.Client(api_key="YOUR_API_KEY")  # Замените на ваш API-ключ
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html')  # Убедитесь, что у вас есть этот HTML-файл
 
 @app.route('/generate', methods=['POST'])
 def generate_article():
@@ -20,14 +20,18 @@ def generate_article():
         topic = data.get('topic')
         word_count = data.get('word_count')
 
-        # Формирование запроса к модели
+        if not topic or not word_count:
+            return jsonify({'error': 'Не указана тема или количество слов.'}), 400
+
         contents = f"Напишите статью на тему '{topic}' объемом {word_count} слов."
-        
+
         response = client.models.generate_content(
             model="gemini-2.0-flash", contents=contents
         )
 
-        # Измеряем время генерации
+        if not response or not response.text:
+            return jsonify({'error': 'Ответ от модели пуст.'}), 500
+
         generation_time = time.time() - start_time
 
         return jsonify({
@@ -41,4 +45,4 @@ def generate_article():
         }), 500
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)  # Установите debug=True для отладки
