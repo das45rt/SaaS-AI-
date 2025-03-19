@@ -1,10 +1,15 @@
+import os
 from flask import Flask, request, jsonify, render_template
 from google import genai
+from dotenv import load_dotenv
+
+# Загрузка переменных окружения из .env файла
+load_dotenv()
 
 app = Flask(__name__)
 
-# Инициализация клиента GenAI с вашим API-ключом
-client = genai.Client(api_key="AIzaSyBfiOnvMadurYiKJcPBmXbpak0FGRvyt4I")  # Замените на ваш реальный API-ключ
+# Инициализация клиента GenAI с API-ключом из переменной окружения
+client = genai.Client(api_key=os.getenv("GENAI_API_KEY"))
 
 @app.route('/')
 def index():
