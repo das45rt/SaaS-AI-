@@ -3,7 +3,7 @@
     "routes": [
         {
             "src": "/generate",
-            "dest": "api/index.py"
+            "dest": "api/app.py"
         }
     ]
 }
