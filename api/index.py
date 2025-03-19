@@ -8,7 +8,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Инициализация клиента GenAI с API-ключом из переменной окружения
+
 client = genai.Client(api_key=os.getenv("GENAI_API_KEY"))
 
 @app.route('/')
