@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генерация контента</title>
+</head>
+<body>
+    <h1>Генерация контента</h1>
+    <label for="topic">Тема:</label>
+    <input type="text" id="topic" required>
+    <button onclick="generateArticle()">Сгенерировать</button>
+
+    <h2>Результат:</h2>
+    <pre id="result"></pre>
+
+    <script>
+        async function generateArticle() {
+            const topic = document.getElementById("topic").value;
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ topic }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Ошибка генерации.');
+                }
+
+                document.getElementById("result").innerText = data.article || 'Нет текста для отображения.';
+            } catch (error) {
+                document.getElementById("result").innerText = 'Сбой: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
