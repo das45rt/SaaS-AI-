@@ -1,10 +1,50 @@
-from flask import Flask
+from flask import Flask, request, jsonify, render_template
+from google import genai
+import time
 
 app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return "Hello, World!"
+# Инициализация клиента GenAI
+client = genai.Client(api_key="AIzaSyBfiOnvMadurYiKJcPBmXbpak0FGRvyt4I")  # Замените на ваш API-ключ
 
-if __name__ == "__main__":
-    app.run()
+@app.route('/')
+def index():
+    return render_template('index.html')  # Убедитесь, что у вас есть этот HTML-файл
+
+@app.route('/generate', methods=['POST'])
+def generate_article():
+    start_time = time.time()
+
+    try:
+        data = request.json
+        topic = data.get('topic')
+        word_count = data.get('word_count')
+
+        if not topic or not word_count:
+            return jsonify({'error': 'Не указана тема или количество слов.'}), 400
+
+        contents = f"Напишите статью на тему '{topic}' объемом {word_count} слов."
+        print("Запрос к модели:", contents)
+
+        response = client.models.generate_content(
+            model="gemini-2.0-flash", contents=contents
+        )
+
+        if not response or not response.text:
+            return jsonify({'error': 'Ответ от модели пуст.'}), 500
+
+        generation_time = time.time() - start_time
+
+        return jsonify({
+            'article': response.text,
+            'generation_time': generation_time
+        })
+    except Exception as e:
+        print("Ошибка:", str(e))
+        return jsonify({
+            'error': str(e),
+            'message': 'Не удалось сгенерировать статью. Пожалуйста, попробуйте еще раз.'
+        }), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
